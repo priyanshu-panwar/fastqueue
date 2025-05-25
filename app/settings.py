@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     # Queue Settings
     visibility_timeout_seconds: int = 15  # Default message visibility timeout
     max_queue_length: int = 10000  # Optional limit for queue size
+    restore_interval_ms: int = 500  # Interval for restoring messages in milliseconds
 
     # Logging / Debug
     debug: bool = False

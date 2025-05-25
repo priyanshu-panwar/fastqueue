@@ -1,17 +1,20 @@
 from typing import Optional
-from .models import Queue
+from .schemas import Queue
+from .manager import QueueManager
 
 
 # Global in-memory store for all queues
 class QueueRegistry:
-    _queues: dict[str, Queue] = {}
+    _queues: dict[str, QueueManager] = {}
 
     @classmethod
     def add_queue(cls, queue: Queue):
-        cls._queues[queue.name] = queue
+        if cls.exists(queue.name):
+            raise ValueError(f"Queue with name '{queue.name}' already exists.")
+        cls._queues[queue.name] = QueueManager(queue)
 
     @classmethod
-    def get_queue(cls, name: str) -> Optional[Queue]:
+    def get_queue(cls, name: str) -> Optional[QueueManager]:
         if cls.exists(name):
             return cls._queues[name]
         return None
