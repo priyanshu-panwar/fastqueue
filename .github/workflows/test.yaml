@@ -1,4 +1,4 @@
-name: Python application
+name: Test
 
 on:
   push:
@@ -33,4 +33,3 @@ jobs:
 
     - name: Run tests
       run: make test
-      
