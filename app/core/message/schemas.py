@@ -1,43 +1,60 @@
 import uuid
 import time
-from typing import Optional
+import hashlib
 from pydantic import BaseModel, Field
 
+from app.core.message.enums import SQSAction
 
-class Message(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    body: str
-    created_at: float = Field(default_factory=lambda: time.time())
-    visibility_timeout_until: Optional[float] = None
-    receipt_handle: Optional[str] = None
 
-    def is_visible(self) -> bool:
-        """Check if the message is currently visible."""
-        return (
-            self.visibility_timeout_until is None
-            or self.visibility_timeout_until <= time.time()
-        )
+class MessageAttributeValue(BaseModel):
+    DataType: str  # "String" | "Number" | "Binary"
+    StringValue: str | None = None
+    BinaryValue: bytes | None = None
 
 
 class SendMessageRequest(BaseModel):
-    body: str
+    Action: SQSAction | None = SQSAction.SendMessage
+    MessageBody: str
+    DelaySeconds: int | None = 0
+    MessageAttributes: dict[str, MessageAttributeValue] | None = None
 
 
 class SendMessageResponse(BaseModel):
-    message_id: str
+    MessageId: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    MD5OfMessageBody: str
+
+
+class SQSMessage(BaseModel):
+    MessageId: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    ReceiptHandle: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    Body: str
+    MD5OfBody: str = ""
+    VisibilityTimeoutUntil: float | None = None
+    MessageAttributes: dict[str, MessageAttributeValue] | None = None
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        self.MD5OfBody = hashlib.md5(self.Body.encode("utf-8")).hexdigest()
+
+    def is_visible(self) -> bool:
+        return (
+            self.VisibilityTimeoutUntil is None
+            or self.VisibilityTimeoutUntil <= time.time()
+        )
+
+
+class ReceiveMessageRequest(BaseModel):
+    Action: SQSAction | None = SQSAction.ReceiveMessage
+    MaxNumberOfMessages: int | None = 1
+    VisibilityTimeout: int | None = None
+    WaitTimeSeconds: int | None = 0
+    MessageAttributeNames: list[str] | None = Field(default_factory=lambda: ["All"])
 
 
 class ReceiveMessageResponse(BaseModel):
-    message_id: str
-    body: str
-    receipt_handle: str
+    Messages: list[SQSMessage] | None = Field(default_factory=list)
 
 
 class DeleteMessageRequest(BaseModel):
-    receipt_handle: str
-
-
-class QueueStats(BaseModel):
-    visible_count: int
-    invisible_count: int
-    deleted_count: int
+    Action: SQSAction | None = SQSAction.DeleteMessage
+    ReceiptHandle: str

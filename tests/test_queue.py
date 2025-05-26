@@ -1,3 +1,4 @@
+import random
 from fastapi.testclient import TestClient
 from unittest.mock import patch
 
@@ -7,6 +8,7 @@ from app.settings import settings
 client = TestClient(app)
 
 API_KEY_HEADER = {"Authorization": f"Bearer {settings.api_key}"}
+random_name = random.randint(10000, 99999)
 
 
 def test_create_queue():
@@ -14,14 +16,14 @@ def test_create_queue():
         "/v1/queues",
         headers=API_KEY_HEADER,
         json={
-            "name": "test-queue",
+            "name": f"test-queue-{random_name}",
             "visibility_timeout_seconds": 30,
             "max_queue_length": 100,
         },
     )
     assert response.status_code == 201
     data = response.json()
-    assert data["name"] == "test-queue"
+    assert data["name"] == f"test-queue-{random_name}"
     assert data["visibility_timeout_seconds"] == 30
     assert data["max_queue_length"] == 100
 
@@ -32,7 +34,7 @@ def test_create_duplicate_queue():
         "/v1/queues",
         headers=API_KEY_HEADER,
         json={
-            "name": "test-queue",
+            "name": f"test-queue-{random_name}",
             "visibility_timeout_seconds": 30,
             "max_queue_length": 100,
         },
@@ -45,12 +47,14 @@ def test_list_queues():
     response = client.get("/v1/queues", headers=API_KEY_HEADER)
     assert response.status_code == 200
     assert isinstance(response.json()["queues"], list)
-    assert any(q["name"] == "test-queue" for q in response.json()["queues"])
+    assert any(
+        q["name"] == f"test-queue-{random_name}" for q in response.json()["queues"]
+    )
 
 
 def test_update_queue():
     response = client.patch(
-        "/v1/queues/test-queue",
+        f"/v1/queues/test-queue-{random_name}",
         headers=API_KEY_HEADER,
         json={"max_queue_length": 500},
     )
@@ -59,7 +63,9 @@ def test_update_queue():
 
 
 def test_delete_queue():
-    response = client.delete("/v1/queues/test-queue", headers=API_KEY_HEADER)
+    response = client.delete(
+        f"/v1/queues/test-queue-{random_name}", headers=API_KEY_HEADER
+    )
     assert response.status_code == 204  # No content
 
 

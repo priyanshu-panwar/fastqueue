@@ -23,3 +23,9 @@ class QueueResponse(Queue):
 
 class QueueListResponse(BaseModel):
     queues: list[QueueResponse]
+
+
+class QueueStats(BaseModel):
+    VisibleCount: int
+    InvisibleCount: int
+    DeletedCount: int
