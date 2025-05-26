@@ -1,10 +1,11 @@
 from pydantic import BaseModel
+from app.settings import settings
 
 
 class Queue(BaseModel):
     name: str
-    visibility_timeout_seconds: int | None = None
-    max_queue_length: int | None = None
+    visibility_timeout_seconds: int | None = settings.visibility_timeout_seconds
+    max_queue_length: int | None = settings.max_queue_length
 
 
 class QueueCreate(Queue):

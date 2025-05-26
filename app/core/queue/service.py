@@ -74,3 +74,12 @@ def update_queue(db: Session, name: str, update_data: QueueUpdate) -> QueueRespo
     _logger.info(f"Queue {name} updated successfully")
 
     return QueueResponse.model_validate(queue, from_attributes=True)
+
+
+def get_queue_by_name(db: Session, name: str) -> QueueResponse | None:
+    queue = db.query(Queue).filter_by(name=name).first()
+    if not queue:
+        _logger.warning(f"Queue {name} not found in DB")
+        return None
+
+    return QueueResponse.model_validate(queue, from_attributes=True)
