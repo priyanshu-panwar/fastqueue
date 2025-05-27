@@ -43,9 +43,7 @@ class QueueManager:
             MessageId=message.MessageId, MD5OfMessageBody=message.MD5OfBody
         )
 
-    def receive_messages(
-        self, max_messages: int = 1, visibility_timeout: int | None = None
-    ) -> ReceiveMessageResponse:
+    def receive_messages(self, max_messages: int = 1) -> ReceiveMessageResponse:
         results: list[SQSMessage] = []
 
         with self._lock:
@@ -55,7 +53,9 @@ class QueueManager:
                     continue
 
                 expiry = time.time() + (
-                    visibility_timeout if visibility_timeout is not None else 0
+                    self.visibility_timeout_seconds
+                    if self.visibility_timeout_seconds is not None
+                    else 0
                 )
 
                 self.receipt_handle_map[message.ReceiptHandle] = message.MessageId
