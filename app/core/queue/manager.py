@@ -2,6 +2,7 @@ import heapq
 import time
 import threading
 from collections import deque
+import uuid
 
 from app.core.queue.schemas import Queue
 from app.core.message.schemas import (
@@ -9,7 +10,6 @@ from app.core.message.schemas import (
     SendMessageResponse,
     SQSMessage,
     ReceiveMessageResponse,
-    DeleteMessageRequest,
 )
 
 
@@ -33,30 +33,41 @@ class QueueManager:
 
         if request.DelaySeconds:
             message.VisibilityTimeoutUntil = time.time() + request.DelaySeconds
+            heapq.heappush(
+                self.invisible_heap,
+                (message.VisibilityTimeoutUntil, message.ReceiptHandle, message),
+            )
         else:
             message.VisibilityTimeoutUntil = None
-
-        # with self._lock:
-        self.visible_messages.append(message)
+            self.visible_messages.append(message)
 
         return SendMessageResponse(
             MessageId=message.MessageId, MD5OfMessageBody=message.MD5OfBody
         )
 
-    def receive_messages(self, max_messages: int = 1) -> ReceiveMessageResponse:
+    def receive_messages(
+        self, max_messages: int = 1, visibility_timeout: int | None = None
+    ) -> ReceiveMessageResponse:
         results: list[SQSMessage] = []
 
         with self._lock:
             while self.visible_messages and len(results) < max_messages:
                 message = self.visible_messages.popleft()
                 if message.ReceiptHandle in self.deleted_receipt_handles:
+                    self.deleted_receipt_handles.discard(message.ReceiptHandle)
+                    self.receipt_handle_map.pop(message.ReceiptHandle, None)
                     continue
 
+                message.ApproximateReceiveCount += 1
+
+                message.ReceiptHandle = str(uuid.uuid4())
+
                 expiry = time.time() + (
-                    self.visibility_timeout_seconds
-                    if self.visibility_timeout_seconds is not None
-                    else 0
+                    visibility_timeout
+                    if visibility_timeout is not None
+                    else self.visibility_timeout_seconds
                 )
+                message.VisibilityTimeoutUntil = expiry
 
                 self.receipt_handle_map[message.ReceiptHandle] = message.MessageId
                 heapq.heappush(
@@ -75,11 +86,26 @@ class QueueManager:
 
     def restore_visible_messages(self):
         now = time.time()
-        # with self._lock:
-        while self.invisible_heap and self.invisible_heap[0][0] <= now:
-            _, receipt_handle, message = heapq.heappop(self.invisible_heap)
+
+        expired_messages = []
+        with self._lock:
+            while self.invisible_heap and self.invisible_heap[0][0] <= now:
+                expired_messages.append(heapq.heappop(self.invisible_heap))
+
+        messages_to_restore = []
+        handles_to_cleanup = []
+
+        for expiry, receipt_handle, message in expired_messages:
             if receipt_handle not in self.deleted_receipt_handles:
-                self.visible_messages.append(message)
+                message.VisibilityTimeoutUntil = None
+                messages_to_restore.append(message)
             else:
-                self.deleted_receipt_handles.discard(receipt_handle)
-                self.receipt_handle_map.pop(receipt_handle, None)
+                handles_to_cleanup.append(receipt_handle)
+
+        if messages_to_restore or handles_to_cleanup:
+            with self._lock:
+                self.visible_messages.extend(messages_to_restore)
+
+                for handle in handles_to_cleanup:
+                    self.deleted_receipt_handles.discard(handle)
+                    self.receipt_handle_map.pop(handle, None)

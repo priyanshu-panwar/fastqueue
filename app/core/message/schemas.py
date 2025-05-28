@@ -31,6 +31,7 @@ class SQSMessage(BaseModel):
     MD5OfBody: str = ""
     VisibilityTimeoutUntil: float | None = None
     MessageAttributes: dict[str, MessageAttributeValue] | None = None
+    ApproximateReceiveCount: int = 0
 
     def __init__(self, **data):
         super().__init__(**data)

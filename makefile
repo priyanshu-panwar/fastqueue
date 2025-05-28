@@ -2,7 +2,7 @@
 
 # Run the FastAPI app
 run:
-	poetry run uvicorn app.main:app --reload
+	poetry run uvicorn app.main:app --reload --port 9080
 
 # Run tests
 test:
