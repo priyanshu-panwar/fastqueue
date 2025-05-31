@@ -27,6 +27,10 @@ class Settings(BaseSettings):
     default_username: str = "admin"
     default_password: str = "password"
 
+    # Cache Settings
+    verify_token_cache_ttl_seconds: int = 900  # 15 minutes
+    verify_token_cache_maxsize: int = 100
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
