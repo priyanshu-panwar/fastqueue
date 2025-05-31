@@ -1,0 +1,72 @@
+# _config.yml - GitHub Pages Configuration
+
+# Site settings
+title: FastQueue Documentation
+description: A lightweight, self-hosted message queue system inspired by AWS SQS
+url: "https://priyanshu-panwar.github.io"
+baseurl: "/fastqueue"
+
+# Theme selection (choose one of the following options)
+
+# Option 1: Use a supported GitHub Pages theme
+theme: minima
+# Other supported themes: jekyll-theme-slate, jekyll-theme-architect, 
+# jekyll-theme-cayman, jekyll-theme-dinky, jekyll-theme-hacker, 
+# jekyll-theme-leap-day, jekyll-theme-merlot, jekyll-theme-midnight, 
+# jekyll-theme-minimal, jekyll-theme-modernist, jekyll-theme-slate, 
+# jekyll-theme-tactile, jekyll-theme-time-machine
+
+# Option 2: Use a remote theme (more options available)
+# remote_theme: pages-themes/cayman@v0.2.0
+# remote_theme: pages-themes/architect@v0.2.0
+# remote_theme: pages-themes/slate@v0.2.0
+# remote_theme: pmarsceill/just-the-docs
+
+# Navigation
+navigation:
+  - title: Home
+    url: /
+  - title: API Reference
+    url: /api
+  - title: CLI Commands
+    url: /cli
+
+# Markdown processor
+markdown: kramdown
+kramdown:
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: 'highlight'
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Collections (if you want to organize docs better)
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name/
+
+# Exclude files from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - README.md
+
+# Social links (optional)
+github_username: priyanshu-panwar
+linkedin_username: priyanshu-panwar
+
+# Footer
+footer_content: "Copyright &copy; 2025 FastQueue. Distributed by an <a href=\"https://github.com/priyanshu-panwar/fastqueue/tree/main/LICENSE\">MIT license.</a>"
+
+# Google Analytics (optional)
+# google_analytics: UA-XXXXXXXX-X
