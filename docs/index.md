@@ -1,12 +1,12 @@
 ---
 layout: default
-title: FastQueue Documentation
-description: A lightweight, self-hosted message queue system inspired by AWS SQS
+title: 🦄FastQueue Documentation
+description: 🦄A lightweight, self-hosted message queue system inspired by AWS SQS
 ---
 
-# FastQueue
+# 🦄FastQueue
 
-FastQueue is a lightweight, self-hosted message queue system inspired by AWS SQS. It's designed for small-scale, cost-conscious developers who want reliability, observability, and speed—without relying on managed services.
+🦄FastQueue is a lightweight, self-hosted message queue system inspired by AWS SQS. It's designed for small-scale, cost-conscious developers who want reliability, observability, and speed—without relying on managed services.
 
 ---
 
