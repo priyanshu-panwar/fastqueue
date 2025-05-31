@@ -1,7 +1,7 @@
 # _config.yml - GitHub Pages Configuration
 
 # Site settings
-title: 🦄FastQueue Documentation
+title: FastQueue Documentation
 description: 🦄A lightweight, self-hosted message queue system inspired by AWS SQS
 url: "https://priyanshu-panwar.github.io"
 baseurl: "/fastqueue"
