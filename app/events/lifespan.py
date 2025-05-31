@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 
 from app.events.load_queues import load_queues
 from app.events.restore_loop import restore_loop
+from app.events.create_users import create_users
 from app.database import Base, engine
 
 
@@ -14,6 +15,7 @@ async def lifespan(app: FastAPI):
     This is used to perform startup and shutdown tasks.
     """
     from app.core.queue.models import Queue
+    from app.auth2.models import User
 
     # Perform startup tasks here
     # Ensure all database tables are created at startup
@@ -22,6 +24,8 @@ async def lifespan(app: FastAPI):
     load_queues()
     # Restore invisible messages in the queue
     asyncio.create_task(restore_loop())
+    # Create initial users
+    create_users()
 
     yield
     # Perform shutdown tasks here

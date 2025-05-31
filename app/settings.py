@@ -16,6 +16,17 @@ class Settings(BaseSettings):
     # Logging / Debug
     debug: bool = False
 
+    # Secret Key
+    JWT_SECRET_KEY: str = "default_secret_key"
+    JWT_REFRESH_SECRET_KEY: str = "default_refresh_secret_key"
+    JWT_ALGORITHM: str = "HS256"
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 15  # 15 minutes
+    JWT_REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
+
+    # User
+    default_username: str = "admin"
+    default_password: str = "password"
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

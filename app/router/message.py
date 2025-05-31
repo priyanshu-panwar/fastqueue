@@ -9,9 +9,10 @@ from app.core.message.schemas import (
 from app.core.message.service import send_message, receive_messages, delete_message
 from app.core.message.enums import SQSAction
 from app.auth.service import verify_api_key
+from app.auth2.dependencies import get_current_user
 
 router = APIRouter(
-    prefix="/queue", tags=["messages"], dependencies=[Depends(verify_api_key)]
+    prefix="/queue", tags=["messages"], dependencies=[Depends(get_current_user)]
 )
 _logger = logging.getLogger(__name__)
 

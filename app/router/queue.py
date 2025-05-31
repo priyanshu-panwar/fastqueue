@@ -14,9 +14,10 @@ from app.core.queue.exceptions import (
     QueueNotFoundException,
 )
 from app.auth.service import verify_api_key
+from app.auth2.dependencies import get_current_user
 
 router = APIRouter(
-    prefix="/queues", tags=["queues"], dependencies=[Depends(verify_api_key)]
+    prefix="/queues", tags=["queues"], dependencies=[Depends(get_current_user)]
 )
 
 
