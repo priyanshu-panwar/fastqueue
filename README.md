@@ -1,9 +1,3 @@
----
-layout: default
-title: FastQueue Documentation
-description: A lightweight, self-hosted message queue system inspired by AWS SQS
----
-
 # FastQueue
 
 🦄FastQueue is a lightweight, self-hosted message queue system inspired by AWS SQS. It's designed for small-scale, cost-conscious developers who want reliability, observability, and speed—without relying on managed services.
@@ -156,39 +150,4 @@ FastQueue is released under the [MIT License](https://github.com/priyanshu009ch/
 
 - [GitHub Repository](https://github.com/priyanshu009ch/fastqueue)
 - [Docker Hub](https://hub.docker.com/r/priyanshu009ch/fastqueue)
-- [Issues & Bug Reports](https://github.com/priyanshu009ch/fastqueue/issues)
-
-<style>
-.docs-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin: 2rem 0;
-}
-
-.doc-card {
-  border: 1px solid #e1e4e8;
-  border-radius: 8px;
-  padding: 1.5rem;
-  background: #f8f9fa;
-}
-
-.doc-card h3 {
-  margin-top: 0;
-  color: #0366d6;
-}
-
-.doc-card h3 a {
-  text-decoration: none;
-  color: inherit;
-}
-
-.doc-card h3 a:hover {
-  text-decoration: underline;
-}
-
-.doc-card p {
-  color: #586069;
-  margin-bottom: 0;
-}
-</style>
+- [Docs](https://priyanshu-panwar.github.io/fastqueue/)
