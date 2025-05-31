@@ -3,7 +3,12 @@ import logging
 from sqlalchemy.orm import Session
 
 from app.core.queue.models import Queue
-from app.core.queue.schemas import QueueCreate, QueueUpdate, QueueResponse
+from app.core.queue.schemas import (
+    QueueCreate,
+    QueueUpdate,
+    QueueResponse,
+    Queue as QueueSchema,
+)
 from app.core.queue.registry import QueueRegistry
 from app.core.queue.exceptions import *
 
@@ -30,7 +35,7 @@ def create_queue(db: Session, queue_data: QueueCreate) -> QueueResponse:
         raise QueueCreationException()
 
     # Register in in-memory registry
-    QueueRegistry.add_queue(db_queue)
+    QueueRegistry.add_queue(QueueSchema.model_validate(db_queue, from_attributes=True))
 
     _logger.info(f"Queue {queue_data.name} created successfully")
 
